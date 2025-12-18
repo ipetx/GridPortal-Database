@@ -24,6 +24,7 @@ DECLARE
     v_Columns JSONB;
     v_BaseColumns JSONB;
     v_DropdownConfigs JSONB;
+    v_LinkConfigs JSONB;
     v_TotalCount INT;
     v_FilterWhere TEXT := '';
     v_FilterJson JSONB;
@@ -241,11 +242,28 @@ BEGIN
       AND cm."IsActive" = true
       AND cm."CellEditor" = 'dropdown';
     
-    -- Merge dropdown configs into base columns
+    -- Get link configurations from ColumnMetadata
+    SELECT jsonb_object_agg(
+        cm."ColumnName",
+        cm."LinkConfig"
+    )
+    INTO v_LinkConfigs
+    FROM "ColumnMetadata" cm
+    WHERE cm."ProcedureName" = 'sp_Grid_Buses'
+      AND cm."IsActive" = true
+      AND cm."LinkConfig" IS NOT NULL
+      AND (cm."LinkConfig"->>'enabled')::boolean = true;
+    
+    -- Merge dropdown and link configs into base columns
     SELECT jsonb_agg(
         CASE 
+            WHEN v_DropdownConfigs ? (col->>'field') AND v_LinkConfigs ? (col->>'field') THEN
+                col || jsonb_build_object('dropdownConfig', v_DropdownConfigs->(col->>'field'))
+                    || jsonb_build_object('linkConfig', v_LinkConfigs->(col->>'field'))
             WHEN v_DropdownConfigs ? (col->>'field') THEN
                 col || jsonb_build_object('dropdownConfig', v_DropdownConfigs->(col->>'field'))
+            WHEN v_LinkConfigs ? (col->>'field') THEN
+                col || jsonb_build_object('linkConfig', v_LinkConfigs->(col->>'field'))
             ELSE
                 col
         END
@@ -271,6 +289,7 @@ ALTER FUNCTION public.sp_grid_buses(integer, integer, integer, integer, characte
 GRANT EXECUTE ON FUNCTION public.sp_grid_buses(integer, integer, integer, integer, character varying, character varying, text, character varying) TO PUBLIC;
 
 GRANT EXECUTE ON FUNCTION public.sp_grid_buses(integer, integer, integer, integer, character varying, character varying, text, character varying) TO postgres;
+
 
 
 -- =============================================
