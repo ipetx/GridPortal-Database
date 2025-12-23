@@ -32,9 +32,7 @@ VALUES (
             "sourceFields": ["CaseNumber"]
           }
         ],
-        "breadcrumbLabel": "{name} - AClines",
-        "allowMultipleLevels": false,
-        "maxDepth": 1
+        "breadcrumbLabel": "{name} - AClines"
       }
     }'::JSONB,
     true
@@ -72,9 +70,7 @@ VALUES (
             "sourceFields": ["CaseNumber"]
           }
         ],
-        "breadcrumbLabel": "{name} - Transformers",
-        "allowMultipleLevels": false,
-        "maxDepth": 1
+        "breadcrumbLabel": "{name} - Transformers"
       }
     }'::JSONB,
     true

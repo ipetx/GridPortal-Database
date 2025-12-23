@@ -31,9 +31,7 @@ VALUES (
             "sourceFields": ["CaseNumber"]
           }
         ],
-        "breadcrumbLabel": "Bus {ibus}",
-        "allowMultipleLevels": true,
-        "maxDepth": 5
+        "breadcrumbLabel": "Bus {ibus}"
       }
     }'::JSONB,
     true
@@ -71,9 +69,7 @@ VALUES (
             "sourceFields": ["CaseNumber"]
           }
         ],
-        "breadcrumbLabel": "Bus {jbus}",
-        "allowMultipleLevels": true,
-        "maxDepth": 5
+        "breadcrumbLabel": "Bus {jbus}"
       }
     }'::JSONB,
     true
